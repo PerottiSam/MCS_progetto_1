@@ -12,10 +12,10 @@ public class MatrixMarketReader {
 
     /**
      * Legge un file .mtx e lo converte in una matrice sparsa CSC di EJML.
-     * * @param filePath Il percorso del file .mtx
+     * @param filePath Il percorso del file .mtx
      * @return La matrice DMatrixSparseCSC
      * @throws IOException Se ci sono problemi di lettura del file
-     */
+    */
     public static DMatrixSparseCSC read(String filePath) throws IOException {
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
@@ -23,8 +23,8 @@ public class MatrixMarketReader {
 
             // 1. Lettura dell'Header
             line = br.readLine();
-            if (line == null || !line.startsWith("%%MatrixMarket")) {
-                throw new IOException("Il file non sembra essere in formato Matrix Market valido.");
+            if (line == null || !line.trim().startsWith("%MatrixMarket")) {
+                throw new IOException("Il file non sembra essere in formato Matrix Market valido. Riga letta: " + line);
             }
             if (line.toLowerCase().contains("symmetric")) {
                 isSymmetric = true;
@@ -36,6 +36,7 @@ public class MatrixMarketReader {
             }
 
             // 3. Lettura delle dimensioni (righe, colonne, numero di valori non nulli)
+            assert line != null;
             String[] dims = line.trim().split("\\s+");
             int rows = Integer.parseInt(dims[0]);
             int cols = Integer.parseInt(dims[1]);
