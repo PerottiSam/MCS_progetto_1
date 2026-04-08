@@ -8,13 +8,16 @@ import solvers.iterative.JacobiSolver;
 import java.io.IOException;
 import java.util.Arrays;
 
+/*
 public class Main {
     public static void main(String[] args) {
 
     }
 }
+*/
 
-/*
+
+
 public class Main {
     public static void main(String[] args) {
         // Matrici fornite nel progetto [cite: 31]
@@ -74,4 +77,4 @@ public class Main {
                 "jacobi", res.iterations, res.time, res.relativeError, trueError, res.converged);
     }
 }
-*/
+

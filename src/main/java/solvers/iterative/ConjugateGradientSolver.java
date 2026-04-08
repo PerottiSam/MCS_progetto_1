@@ -8,7 +8,7 @@ import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.mult.VectorVectorMult_DDRM;
 import org.ejml.sparse.csc.CommonOps_DSCC;
 
-import static Helpers.Costants.MAX_ITER;
+import static helpers.Constants.MAX_ITER;
 
 
 /**
