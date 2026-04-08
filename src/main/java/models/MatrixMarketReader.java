@@ -8,6 +8,13 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
+/**
+ * Utilità per la lettura di file in formato Matrix Market (.mtx).
+ * <p>
+ * Converte i file testuali in matrici sparse nel formato CSC di EJML.
+ * Gestisce automaticamente la conversione degli indici (da 1-based a 0-based)
+ * e la ricostruzione degli elementi speculari per le matrici simmetriche.
+ */
 public class MatrixMarketReader {
 
     /**
@@ -15,13 +22,13 @@ public class MatrixMarketReader {
      * @param filePath Il percorso del file .mtx
      * @return La matrice DMatrixSparseCSC
      * @throws IOException Se ci sono problemi di lettura del file
-    */
+     */
     public static DMatrixSparseCSC read(String filePath) throws IOException {
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
             boolean isSymmetric = false;
 
-            // 1. Lettura dell'Header
+            // Lettura dell'Header
             line = br.readLine();
             if (line == null || !line.trim().startsWith("%MatrixMarket")) {
                 throw new IOException("Il file non sembra essere in formato Matrix Market valido. Riga letta: " + line);
@@ -30,12 +37,12 @@ public class MatrixMarketReader {
                 isSymmetric = true;
             }
 
-            // 2. Salta i commenti
+            // Salta i commenti
             while ((line = br.readLine()) != null && line.startsWith("%")) {
                 // Ignora i commenti
             }
 
-            // 3. Lettura delle dimensioni (righe, colonne, numero di valori non nulli)
+            // Lettura delle dimensioni (righe, colonne, numero di valori non nulli)
             assert line != null;
             String[] dims = line.trim().split("\\s+");
             int rows = Integer.parseInt(dims[0]);
@@ -69,7 +76,7 @@ public class MatrixMarketReader {
                 }
             }
 
-            // 5. Conversione finale in CSC (Compressed Sparse Column)
+            // Conversione finale in CSC (Compressed Sparse Column)
             DMatrixSparseCSC csc = new DMatrixSparseCSC(rows, cols, triplet.getNonZeroLength());
             DConvertMatrixStruct.convert(triplet, csc);
 
