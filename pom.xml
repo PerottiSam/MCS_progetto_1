@@ -15,7 +15,7 @@
     </properties>
 
     <dependencies>
-        <!-- Source: https://mvnrepository.com/artifact/org.ejml/ejml-ddense -->
+        <!-- Source: https://mvnrepository.com/artifact/org.ejml/ejml-all -->
         <dependency>
             <groupId>org.ejml</groupId>
             <artifactId>ejml-all</artifactId>
