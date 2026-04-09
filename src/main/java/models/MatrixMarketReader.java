@@ -38,9 +38,7 @@ public class MatrixMarketReader {
             }
 
             // Salta i commenti
-            while ((line = br.readLine()) != null && line.startsWith("%")) {
-                // Ignora i commenti
-            }
+            while ((line = br.readLine()) != null && line.startsWith("%")) {}
 
             // Lettura delle dimensioni (righe, colonne, numero di valori non nulli)
             assert line != null;

@@ -12,7 +12,7 @@ import org.ejml.sparse.csc.CommonOps_DSCC;
  * Classe astratta base per l'implementazione dei solutori iterativi.
  * <p>
  * Utilizza il pattern <i>Template Method</i>: orchestra il flusso generale
- * della risoluzione (calcolo preventivo della norma, misurazione dei tempi,
+ * della risoluzione (c alcolo preventivo della norma, misurazione dei tempi,
  * controllo convergenza globale e formattazione del risultato), delegando
  * la logica matematica pura al metodo astratto implementato dalle sottoclassi.
  */

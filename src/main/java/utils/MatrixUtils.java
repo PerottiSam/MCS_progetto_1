@@ -9,7 +9,7 @@ public class MatrixUtils {
     /**
      * Estrae la parte triangolare inferiore di una matrice sparsa, includendo
      * la diagonale principale.
-     * * @param A La matrice sparsa di origine (formato CSC).
+     * @param A La matrice sparsa di origine (formato CSC).
      * @return Una nuova matrice sparsa CSC contenente esclusivamente gli elementi
      * del triangolo inferiore di A.
      */
@@ -40,7 +40,7 @@ public class MatrixUtils {
     /**
      * Estrae la parte triangolare superiore di una matrice sparsa.
      * Permette di escludere la diagonale principale tramite il parametro {@code strict}.
-     * * @param A La matrice sparsa di origine (formato CSC).
+     * @param A La matrice sparsa di origine (formato CSC).
      * @param strict Se {@code true}, ignora la diagonale principale estraendo solo la parte
      * strettamente superiore.
      * Se {@code false}, include la diagonale.
@@ -72,7 +72,7 @@ public class MatrixUtils {
     /**
      * Inverte il segno di tutti gli elementi non nulli di una matrice sparsa (A = -A).
      * <p> Nota: Questo metodo modifica direttamente la matrice passata come argomento, sovrascrivendo i suoi valori con i nuovi valori invertiti.</p>
-     * * @param A La matrice sparsa in cui invertire i segni. La matrice passata
+     * @param A La matrice sparsa in cui invertire i segni. La matrice passata
      * verrà sovrascritta con i nuovi valori.
      */
     public static void changeSign(DMatrixSparseCSC A) {

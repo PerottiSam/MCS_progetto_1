@@ -3,7 +3,7 @@ import models.SolverResult;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
 import org.ejml.sparse.csc.CommonOps_DSCC;
-import solvers.iterative.JacobiSolver;
+import solvers.iterative.*;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -23,7 +23,12 @@ public class Main {
         // Matrici fornite nel progetto [cite: 31]
         String[] matrixFiles = {
                 "src/main/resources/spa1.mtx",
+                "src/main/resources/spa2.mtx",
+                "src/main/resources/vem1.mtx",
+                "src/main/resources/vem2.mtx",
         };
+
+        AbstractIterativeSolver[] solvers = {new JacobiSolver(), new GradientSolver(), new ConjugateGradientSolver(), new GaussSeidelSolver()};
 
         double[] tolerances = {1e-6, 1e-8, 1e-10}; // [cite: 41]
 
@@ -42,20 +47,23 @@ public class Main {
 
                 System.out.println("\n>>> Analisi Matrice: " + filePath + " (Dim: " + n + ")");
 
-                for (double tol : tolerances) {
-                    System.out.println("Tolleranza impostata: " + tol);
+                for (AbstractIterativeSolver solver : solvers) {
+                    for (double tol : tolerances) {
+                        System.out.println("Tolleranza impostata: " + tol);
 
-                    // STEP 3: Esecuzione del solutore [cite: 37]
-                    // (Sostituisci con le istanze di Gauss-Seidel, Gradiente, CG)
-                    JacobiSolver solver = new JacobiSolver();
-                    SolverResult result = solver.solve(A, b, tol);
+                        // STEP 3: Esecuzione del solutore [cite: 37]
+                        // (Sostituisci con le istanze di Gauss-Seidel, Gradiente, CG)
 
-                    // STEP 4: Calcolo errore relativo finale rispetto alla x esatta [cite: 38]
-                    double finalError = calculateTrueError(xExact, result.x);
+                        SolverResult result = solver.solve(A, b, tol);
 
-                    // Stampa risultati richiesti
-                    printRow(result, finalError);
+                        // STEP 4: Calcolo errore relativo finale rispetto alla x esatta [cite: 38]
+                        double finalError = calculateTrueError(xExact, result.x);
+
+                        // Stampa risultati richiesti
+                        printRow(solver.toString(), result, finalError);
+                    }
                 }
+
             } catch (IOException e) {
                 System.err.println("Impossibile leggere " + filePath + ": " + e.getMessage());
             }
@@ -72,9 +80,9 @@ public class Main {
         return Math.sqrt(diffNormSq) / Math.sqrt(xExact.numRows);
     }
 
-    private static void printRow(SolverResult res, double trueError) {
+    private static void printRow(String method, SolverResult res, double trueError) {
         System.out.printf("%-15s | Iter: %-5d | Tempo: %-8.3f ms | Residuo: %.2e | Errore Vero: %.2e | Conv: %b%n",
-                "jacobi", res.iterations, res.time, res.relativeError, trueError, res.converged);
+                method, res.iterations, res.time, res.relativeError, trueError, res.converged);
     }
 }
 

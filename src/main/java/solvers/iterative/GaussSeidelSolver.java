@@ -8,7 +8,7 @@ import org.ejml.sparse.csc.CommonOps_DSCC;
 import solvers.direct.TriangularSolver;
 import utils.MatrixUtils;
 
-import static helpers.Constants.MAX_ITER;
+import static utils.Constants.MAX_ITER;
 
 /**
  * Implementazione del metodo iterativo di Gauss-Seidel.
@@ -84,5 +84,15 @@ public class GaussSeidelSolver extends AbstractIterativeSolver {
         }
 
         return new IterationResult(x, iter, currentRelativeError < tol, currentRelativeError);
+    }
+
+    /**
+     * Restituisce una rappresentazione testuale del solver.
+     *
+     * @return nome del solver
+     */
+    @Override
+    public String toString() {
+        return "GaussSeidelSolver";
     }
 }
