@@ -1,23 +1,17 @@
-import models.MatrixMarketReader;
-import models.SolverResult;
-import org.ejml.data.DMatrixRMaj;
-import org.ejml.data.DMatrixSparseCSC;
-import org.ejml.sparse.csc.CommonOps_DSCC;
-import solvers.iterative.JacobiSolver;
+import app.Application;
 
-import java.io.IOException;
-import java.util.Arrays;
 
-/*
+
 public class Main {
     public static void main(String[] args) {
-
+        Application application = new Application();
+        application.run();
     }
 }
-*/
 
 
 
+/*
 public class Main {
     public static void main(String[] args) {
         // Matrici fornite nel progetto [cite: 31]
@@ -76,5 +70,5 @@ public class Main {
         System.out.printf("%-15s | Iter: %-5d | Tempo: %-8.3f ms | Residuo: %.2e | Errore Vero: %.2e | Conv: %b%n",
                 "jacobi", res.iterations, res.time, res.relativeError, trueError, res.converged);
     }
-}
+}*/
 
