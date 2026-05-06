@@ -1,9 +1,11 @@
 package app;
 
 import models.MatrixMarketReader;
+import models.SolverResult;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
 import org.ejml.dense.row.CommonOps_DDRM;
+import org.ejml.dense.row.NormOps_DDRM;
 import org.ejml.sparse.csc.CommonOps_DSCC;
 import solvers.iterative.*;
 
@@ -38,7 +40,7 @@ public class Application {
             CommonOps_DDRM.fill(xExact, 1.0);
 
             b = getVectorB(A, xExact, n);
-            System.out.println("Vettore b calcolato come Ax, pronto per essere usato nei solutori iterativi.");
+            System.out.println("Vettore b calcolato come Ax.");
 
 
             IterativeSolver[] solvers = {
@@ -48,6 +50,29 @@ public class Application {
                     new ConjugateGradientSolver()
             };
 
+            System.out.println("\n\n");
+
+            System.out.printf("%-20s | %-12s | %-12s | %-17s | %-18s%n",
+                    "Metodo", "Iterazioni", "Tempo (s)", "Errore Relativo", "Errore Vero (su x)");
+
+            System.out.println("-------------------------------------------------------------------------------------------");
+
+            for (IterativeSolver solver : solvers) {
+
+                String solverName = solver.getClass().getSimpleName().replace("Solver", "");
+
+                SolverResult result = solver.solve(A, b, tol);
+
+                double trueError = calculateTrueError(result.x, xExact);
+
+                System.out.printf("%-20s | %-12d | %-12.6f | %-17.5e | %-18.5e%n",
+                        solverName,
+                        result.iterations,
+                        result.time,
+                        result.relativeError,
+                        trueError);
+            }
+
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -55,15 +80,12 @@ public class Application {
     }
 
     public String getPathFile(Scanner sc){
-        sc.nextLine();
-
         Path path = null;
         boolean isFileValid = false;
 
         do {
-            System.out.print("Per favore, inserisci il percorso del file Matrix Market (.mtx) contenente la matrice A: ");
+            System.out.print("Inserire il percorso del file Matrix Market (.mtx) contenente la matrice A: ");
             String inputPath = sc.nextLine().trim();
-            sc.nextLine();
 
             if (inputPath.isEmpty()) {
                 System.out.println("Errore: Il percorso non può essere vuoto.\n");
@@ -89,7 +111,6 @@ public class Application {
     }
 
     public double getTol(Scanner sc) {
-        sc.nextLine();
         double tol = 0.0;
 
         while (true) {
@@ -118,6 +139,23 @@ public class Application {
         DMatrixRMaj b = new DMatrixRMaj(n, 1);
         CommonOps_DSCC.mult(A, xExact, b);
         return b;
+    }
+
+    /**
+     * Calcola l'errore relativo tra la soluzione computata e la soluzione esatta.
+     * Formula: ||x_computed - x_exact||_2 / ||x_exact||_2
+     */
+    private static double calculateTrueError(DMatrixRMaj xComputed, DMatrixRMaj xExact) {
+        int n = xExact.getNumRows();
+        DMatrixRMaj diff = new DMatrixRMaj(n, 1);
+
+        // diff = x_computed - x_exact
+        CommonOps_DDRM.subtract(xComputed, xExact, diff);
+
+        double normDiff = NormOps_DDRM.normP2(diff);
+        double normExact = NormOps_DDRM.normP2(xExact);
+
+        return normDiff / normExact;
     }
 
 }
