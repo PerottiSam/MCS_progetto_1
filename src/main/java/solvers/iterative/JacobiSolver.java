@@ -1,7 +1,7 @@
 
 package solvers.iterative;
 
-import helpers.Constants;
+import utils.Constants;
 import models.IterationResult;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;

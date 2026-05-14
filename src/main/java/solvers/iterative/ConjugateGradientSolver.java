@@ -1,14 +1,13 @@
 package solvers.iterative;
 
 import models.IterationResult;
-import models.SolverResult;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
 import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.mult.VectorVectorMult_DDRM;
 import org.ejml.sparse.csc.CommonOps_DSCC;
 
-import static helpers.Constants.MAX_ITER;
+import static utils.Constants.MAX_ITER;
 
 
 /**

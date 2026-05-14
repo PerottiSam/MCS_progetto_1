@@ -8,7 +8,7 @@ import org.ejml.sparse.csc.CommonOps_DSCC;
 import solvers.direct.TriangularSolver;
 import utils.MatrixUtils;
 
-import static helpers.Constants.MAX_ITER;
+import static utils.Constants.MAX_ITER;
 
 /**
  * Implementazione del metodo iterativo di Gauss-Seidel.
