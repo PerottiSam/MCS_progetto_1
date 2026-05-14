@@ -46,7 +46,7 @@ public class Application {
             IterativeSolver[] solvers = {
                     new JacobiSolver(),
                     new GaussSeidelSolver(),
-                    //new GradientSolver(),
+                    new GradientSolver(),
                     new ConjugateGradientSolver()
             };
 
