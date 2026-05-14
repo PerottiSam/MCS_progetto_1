@@ -6,8 +6,37 @@ import models.IterationResult;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
 
+/**
+ * Implementazione del metodo iterativo di Jacobi
+ *
+ * <p>Questa classe estende {@link AbstractIterativeSolver} e utilizza
+ * una rappresentazione sparsa della matrice A in formato CSC
+ * ({@link DMatrixSparseCSC}) per migliorare le performance su matrici sparse.</p>
+ *
+ * <p><b>Assunzioni:</b></p>
+ * <ul>
+ *   <li>La matrice A è simmetrica definita positiva (SPD).</li>
+ *   <li>Gli elementi diagonali sono tutti non nulli.</li>
+ * </ul>
+ */
 public class JacobiSolver extends AbstractIterativeSolver {
 
+    /**
+     * Esegue le iterazioni del metodo di Jacobi fino al raggiungimento
+     * della tolleranza richiesta o del numero massimo di iterazioni.
+     *
+     * @param A matrice dei coefficienti (sparsa in formato CSC)
+     * @param b vettore dei termini noti
+     * @param normB norma del vettore b (usata per errore relativo)
+     * @param tol tolleranza per il criterio di arresto
+     * @return risultato dell'iterazione contenente:
+     *         <ul>
+     *             <li>la soluzione approssimata</li>
+     *             <li>numero di iterazioni eseguite</li>
+     *             <li>flag di convergenza</li>
+     *             <li>errore relativo finale</li>
+     *         </ul>
+     */
     @Override
     protected IterationResult performIterations(DMatrixSparseCSC A, DMatrixRMaj b, double normB, double tol) {
         final int n = A.getNumRows();
@@ -70,8 +99,16 @@ public class JacobiSolver extends AbstractIterativeSolver {
     }
 
     /**
-     * Estrae gli elementi diagonali e ne calcola l'inverso.
-     * Ottimizzato per il formato CSC.
+     * Estrae gli elementi diagonali della matrice A e ne calcola l'inverso.
+     *
+     * <p>Il metodo è ottimizzato per matrici in formato CSC, iterando
+     * direttamente sugli elementi non nulli di ciascuna colonna.</p>
+     *
+     * @param A matrice sparsa in formato CSC
+     * @param invDiag array di output contenente gli inversi della diagonale
+     *
+     * @throws ArithmeticException se un elemento diagonale è nullo o troppo piccolo
+     * @throws IllegalArgumentException se un elemento diagonale non viene trovato
      */
     private void extractInverseDiagonal(DMatrixSparseCSC A, double[] invDiag) {
         int n = A.getNumRows();
@@ -92,5 +129,15 @@ public class JacobiSolver extends AbstractIterativeSolver {
                 throw new IllegalArgumentException("Matrice con diagonale mancante alla riga " + i);
             }
         }
+    }
+
+    /**
+     * Restituisce una rappresentazione testuale del solver.
+     *
+     * @return nome del solver
+     */
+    @Override
+    public String toString() {
+        return "JacobiSolver";
     }
 }

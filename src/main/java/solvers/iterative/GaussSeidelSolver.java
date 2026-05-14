@@ -85,4 +85,14 @@ public class GaussSeidelSolver extends AbstractIterativeSolver {
 
         return new IterationResult(x, iter, currentRelativeError < tol, currentRelativeError);
     }
+
+    /**
+     * Restituisce una rappresentazione testuale del solver.
+     *
+     * @return nome del solver
+     */
+    @Override
+    public String toString() {
+        return "GaussSeidelSolver";
+    }
 }

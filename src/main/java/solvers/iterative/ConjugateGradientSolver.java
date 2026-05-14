@@ -16,7 +16,6 @@ import static utils.Constants.MAX_ITER;
  * Questo solutore è impiegato per risolvere sistemi lineari Ax = b in cui la
  * matrice dei coefficienti A è simmetrica e definita positiva.
  */
-
 public class ConjugateGradientSolver extends AbstractIterativeSolver {
 
     /**
@@ -89,4 +88,13 @@ public class ConjugateGradientSolver extends AbstractIterativeSolver {
         return new IterationResult(x, iter, iter < MAX_ITER, currentRelativeError);
     }
 
+    /**
+     * Restituisce una rappresentazione testuale del solver.
+     *
+     * @return nome del solver
+     */
+    @Override
+    public String toString() {
+        return "ConjugateGradientSolver";
+    }
 }
