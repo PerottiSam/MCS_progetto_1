@@ -50,27 +50,35 @@ public class Application {
                     new ConjugateGradientSolver()
             };
 
-            System.out.println("\n\n");
+            // Array per salvare i risultati prima di stamparli
+            SolverResult[] results = new SolverResult[solvers.length];
+            double[] trueErrors = new double[solvers.length];
 
-            System.out.printf("%-20s | %-12s | %-12s | %-17s | %-18s%n",
-                    "Metodo", "Iterazioni", "Tempo (s)", "Errore Relativo", "Errore Vero (su x)");
-
+            System.out.println("\nAvvio analisi matematica e risoluzione, attendere...");
             System.out.println("-------------------------------------------------------------------------------------------");
 
-            for (IterativeSolver solver : solvers) {
+            for (int i = 0; i < solvers.length; i++) {
+                String name = solvers[i].getClass().getSimpleName().replace("Solver", "");
+                System.out.print("Esecuzione di " + name + "... ");
+                results[i] = solvers[i].solve(A, b, tol);
+                trueErrors[i] = calculateTrueError(results[i].x, xExact);
+                System.out.println("[COMPLETATO]");
+            }
 
-                String solverName = solver.getClass().getSimpleName().replace("Solver", "");
+            System.out.println("\n");
+            System.out.printf("%-20s | %-12s | %-12s | %-17s | %-18s%n",
+                    "Metodo", "Iterazioni", "Tempo (s)", "Errore Relativo", "Errore Vero (su x)");
+            System.out.println("-------------------------------------------------------------------------------------------");
 
-                SolverResult result = solver.solve(A, b, tol);
-
-                double trueError = calculateTrueError(result.x, xExact);
+            for (int i = 0; i < solvers.length; i++) {
+                String solverName = solvers[i].getClass().getSimpleName().replace("Solver", "");
 
                 System.out.printf("%-20s | %-12d | %-12.6f | %-17.5e | %-18.5e%n",
                         solverName,
-                        result.iterations,
-                        result.time,
-                        result.relativeError,
-                        trueError);
+                        results[i].iterations,
+                        results[i].time,
+                        results[i].relativeError,
+                        trueErrors[i]);
             }
 
         }catch (Exception e){
