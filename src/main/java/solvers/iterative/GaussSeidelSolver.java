@@ -1,5 +1,6 @@
 package solvers.iterative;
 
+import exceptions.SolverException;
 import models.IterationResult;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
@@ -36,6 +37,20 @@ public class GaussSeidelSolver extends AbstractIterativeSolver {
 
         //se ci sono zeri sulla diagonale viene lanciata un eccezione
         MatrixValidator.checkNoZeroOnDiagonal(A);
+
+        // Controllo convergenza (Condizioni sufficienti)
+        boolean isSPD = false;
+        try {
+            MatrixValidator.checkSPD(A);
+            isSPD = true;
+        } catch (SolverException ignored) {
+            // Se non è SPD, si procede con la verifica della dominanza diagonale
+        }
+
+        if (!isSPD && !MatrixValidator.isDiagonallyDominant(A)) {
+            System.err.println("WARNING [GaussSeidel]: La matrice non è né SPD né a dominanza diagonale. " +
+                    "La convergenza non è garantita.");
+        }
 
         int n = A.getNumRows();
 

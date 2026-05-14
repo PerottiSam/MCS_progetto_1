@@ -44,6 +44,10 @@ public class JacobiSolver extends AbstractIterativeSolver {
         MatrixValidator.checkSymmetry(A);
         MatrixValidator.checkNoZeroOnDiagonal(A);
 
+        if (!MatrixValidator.isDiagonallyDominant(A)) {
+            System.err.println("WARNING [Jacobi]: La matrice non è a dominanza diagonale stretta. La convergenza non è garantita.");
+        }
+
         final int n = A.getNumRows();
 
         // Vettori di stato (x e xOld)
