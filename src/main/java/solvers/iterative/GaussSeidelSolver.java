@@ -7,6 +7,7 @@ import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.sparse.csc.CommonOps_DSCC;
 import solvers.direct.TriangularSolver;
 import utils.MatrixUtils;
+import utils.MatrixValidator;
 
 import static utils.Constants.MAX_ITER;
 
@@ -32,6 +33,9 @@ public class GaussSeidelSolver extends AbstractIterativeSolver {
 
     @Override
     protected IterationResult performIterations(DMatrixSparseCSC A, DMatrixRMaj b, double normB, double tol) {
+
+        //se ci sono zeri sulla diagonale viene lanciata un eccezione
+        MatrixValidator.checkNoZeroOnDiagonal(A);
 
         int n = A.getNumRows();
 

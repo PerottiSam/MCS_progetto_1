@@ -7,6 +7,7 @@ import org.ejml.data.DMatrixSparseCSC;
 import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.NormOps_DDRM;
 import org.ejml.sparse.csc.CommonOps_DSCC;
+import utils.MatrixValidator;
 
 /**
  * Classe astratta base per l'implementazione dei solutori iterativi.
@@ -30,6 +31,10 @@ public abstract class AbstractIterativeSolver implements IterativeSolver {
      */
     @Override
     public SolverResult solve(DMatrixSparseCSC A, DMatrixRMaj b, double tol) {
+
+        MatrixValidator.checkSquareMatrix(A);
+        MatrixValidator.checkCompatibility(A, b);
+
         long startTime = System.nanoTime();
 
         int n = A.getNumRows();

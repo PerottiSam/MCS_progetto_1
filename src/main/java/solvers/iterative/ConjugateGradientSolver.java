@@ -6,6 +6,7 @@ import org.ejml.data.DMatrixSparseCSC;
 import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.mult.VectorVectorMult_DDRM;
 import org.ejml.sparse.csc.CommonOps_DSCC;
+import utils.MatrixValidator;
 
 import static utils.Constants.MAX_ITER;
 
@@ -32,6 +33,9 @@ public class ConjugateGradientSolver extends AbstractIterativeSolver {
      */
     @Override
     protected IterationResult performIterations(DMatrixSparseCSC A, DMatrixRMaj b, double normB, double tol) {
+
+        //se la matrice non è simmetrica definita positiva, viene lanciata l'eccezione
+        MatrixValidator.checkSPD(A);
 
         int n = A.getNumRows();
 

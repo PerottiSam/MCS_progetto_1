@@ -5,6 +5,7 @@ import utils.Constants;
 import models.IterationResult;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
+import utils.MatrixValidator;
 
 /**
  * Implementazione del metodo iterativo di Jacobi
@@ -39,6 +40,10 @@ public class JacobiSolver extends AbstractIterativeSolver {
      */
     @Override
     protected IterationResult performIterations(DMatrixSparseCSC A, DMatrixRMaj b, double normB, double tol) {
+
+        MatrixValidator.checkSymmetry(A);
+        MatrixValidator.checkNoZeroOnDiagonal(A);
+
         final int n = A.getNumRows();
 
         // Vettori di stato (x e xOld)
