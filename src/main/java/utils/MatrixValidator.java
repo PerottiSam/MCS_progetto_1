@@ -5,19 +5,17 @@ import exceptions.MatrixConditionException;
 import org.ejml.data.DMatrix;
 
 /**
- * La seguente classe valida i dati in ingresso ai solutori,
- * ottimizzata per le strutture dati della libreria EJML.
+ * La seguente classe valida i dati in ingresso ai solutori iterativi
  */
 public class MatrixValidator {
 
     // Costruttore privato per impedire l'istanziazione
     private MatrixValidator() {
-        throw new UnsupportedOperationException("Questa è una classe di utilità e non può essere istanziata.");
+        throw new UnsupportedOperationException("non puo estere instanziata");
     }
 
     /**
      * Controlla che la matrice sia quadrata (NxN).
-     * Sfrutta i metodi nativi di EJML per le dimensioni.
      */
     public static void checkSquareMatrix(DMatrix matrix) throws InvalidMatrixException {
         if (matrix.getNumRows() != matrix.getNumCols()) {
@@ -28,7 +26,6 @@ public class MatrixValidator {
 
     /**
      * Controlla che le dimensioni della matrice A e del vettore b siano compatibili per il sistema Ax=b.
-     * Assumiamo che il vettore b sia rappresentato come una matrice colonna (Nx1).
      */
     public static void checkCompatibility(DMatrix A, DMatrix b) throws InvalidMatrixException {
         if (A.getNumRows() != b.getNumRows()) {
@@ -39,12 +36,10 @@ public class MatrixValidator {
 
     /**
      * Controlla che non ci siano zeri sulla diagonale principale.
-     * Fondamentale per i metodi di Jacobi e Gauss-Seidel per evitare la divisione per zero.
      */
     public static void checkNoZeroOnDiagonal(DMatrix matrix) throws MatrixConditionException {
         int n = Math.min(matrix.getNumRows(), matrix.getNumCols());
         for (int i = 0; i < n; i++) {
-            // Il metodo .get(r, c) funziona sia per matrici dense che sparse in EJML
             if (matrix.get(i, i) == 0.0) {
                 throw new MatrixConditionException("Elemento nullo sulla diagonale principale all'indice ["
                         + i + "][" + i + "]. Impossibile procedere con l'algoritmo.");
@@ -79,7 +74,6 @@ public class MatrixValidator {
 
     /**
      * Verifica che tutti gli elementi sulla diagonale principale siano strettamente positivi.
-     * È una condizione NECESSARIA affinché una matrice simmetrica sia definita positiva.
      */
     public static void checkPositiveDiagonal(DMatrix matrix) throws MatrixConditionException {
         int n = Math.min(matrix.getNumRows(), matrix.getNumCols());
@@ -93,7 +87,6 @@ public class MatrixValidator {
 
     /**
      * Verifica se la matrice è a dominanza diagonale stretta (per righe).
-     * Condizione SUFFICIENTE per la convergenza di Jacobi e Gauss-Seidel.
      * Ritorna true se lo è, false altrimenti.
      */
     public static boolean isDiagonallyDominant(DMatrix matrix) {
