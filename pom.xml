@@ -22,6 +22,12 @@
             <version>0.44.0</version>
             <scope>compile</scope>
         </dependency>
+        <!-- XChart for charts (replaces JFreeChart) -->
+        <dependency>
+            <groupId>org.knowm.xchart</groupId>
+            <artifactId>xchart</artifactId>
+            <version>3.8.2</version>
+        </dependency>
     </dependencies>
 
 </project>
