@@ -52,22 +52,11 @@ public class ChartGenerator {
     }
 
     /**
-     * Genera il grafico: Numero di iterazioni e residuo relativo
+     * Genera un grafico per ogni tolleranza: mostra il percorso del residuo per ogni solver
      */
     private void generateIterationsResidualChart(String matrixName,
                                                  Map<Double, Map<String, SolverResult>> resultsByTol,
                                                  double[] tolerances) {
-        XYChart chart = new XYChartBuilder()
-                .width(CHART_WIDTH)
-                .height(CHART_HEIGHT)
-                .title("Iterazioni vs Residuo Relativo - " + matrixName)
-                .xAxisTitle("Numero di Iterazioni")
-                .yAxisTitle("Residuo Relativo (scala log)")
-                .build();
-
-        chart.getStyler().setLegendPosition(Styler.LegendPosition.OutsideE);
-        chart.getStyler().setYAxisLogarithmic(true);
-
         double[] sortedTolerances = tolerances.clone();
         Arrays.sort(sortedTolerances);
 
@@ -76,12 +65,25 @@ public class ChartGenerator {
             return;
         }
 
+        // Crea un grafico per ogni tolleranza
         for (double tol : sortedTolerances) {
             Map<String, SolverResult> results = resultsByTol.get(tol);
             if (results == null) {
                 continue;
             }
 
+            XYChart chart = new XYChartBuilder()
+                    .width(CHART_WIDTH)
+                    .height(CHART_HEIGHT)
+                    .title("Percorso Residuo - " + matrixName + " (tol = " + formatTolerance(tol) + ")")
+                    .xAxisTitle("Numero di Iterazioni")
+                    .yAxisTitle("Residuo Relativo (scala log)")
+                    .build();
+
+            chart.getStyler().setLegendPosition(Styler.LegendPosition.OutsideE);
+            chart.getStyler().setYAxisLogarithmic(true);
+
+            // Aggiungi le curve di residuo per ogni solver
             for (String solverName : referenceResults.keySet()) {
                 SolverResult result = results.get(solverName);
                 if (result == null) {
@@ -96,17 +98,32 @@ public class ChartGenerator {
                         x.add((double) (i + 1));
                         y.add(result.residualHistory.get(i));
                     }
-                } else {
-                    x.add((double) result.iterations);
-                    y.add(result.relativeError);
+                    chart.addSeries(solverName, x, y);
                 }
-
-                chart.addSeries(solverName + " @ " + formatTolerance(tol), x, y);
             }
-        }
 
-        String filename = String.format("01_Iterazioni_Residuo_%s_%s.png", matrixName, timestamp);
-        saveChart(chart, filename);
+            // Aggiungi una linea orizzontale per la tolleranza
+            List<Double> tolX = new ArrayList<>();
+            List<Double> tolY = new ArrayList<>();
+            int maxIterations = 0;
+            for (String solverName : referenceResults.keySet()) {
+                SolverResult result = results.get(solverName);
+                if (result != null && result.residualHistory != null) {
+                    maxIterations = Math.max(maxIterations, result.residualHistory.size());
+                }
+            }
+            if (maxIterations > 0) {
+                tolX.add(1.0);
+                tolX.add((double) maxIterations);
+                tolY.add(tol);
+                tolY.add(tol);
+                chart.addSeries("Tolleranza ", tolX, tolY);
+            }
+
+            String filename = String.format("01_Iterazioni_Residuo_%s_tol_%s_%s.png",
+                    matrixName, formatToleranceForFilename(tol), timestamp);
+            saveChart(chart, filename);
+        }
     }
 
     /**
@@ -227,6 +244,19 @@ public class ChartGenerator {
 
     private String formatTolerance(double tol) {
         return String.format(Locale.US, "%.0e", tol).replace("E", "e");
+    }
+
+    private String formatToleranceForFilename(double tol) {
+        if (tol >= 1e-10 && tol <= 1e-4) {
+            // Per tolleranze standard: 1e-4, 1e-6, 1e-8, 1e-10
+            int exponent = (int) Math.round(Math.log10(tol));
+            return "1e" + Math.abs(exponent);
+        }
+        return String.format(Locale.US, "%.0e", tol)
+                .replace("E", "-e")
+                .replace("+", "")
+                .replace("e-0", "e-")
+                .toLowerCase();
     }
 }
 

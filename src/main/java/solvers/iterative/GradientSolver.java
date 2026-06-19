@@ -57,35 +57,41 @@ public class GradientSolver extends AbstractIterativeSolver {
         DMatrixRMaj bufferRes = new DMatrixRMaj(n, 1);
 
         int iter = 0;
-        double relError = Double.MAX_VALUE;
+         double relError = Double.MAX_VALUE;
 
-        while (iter < Constants.MAX_ITER && relError > tol) {
+         IterationResult result = new IterationResult(x, 0, false, relError);
 
-            // residual = b - A*x
-            CommonOps_DSCC.mult(A, x, residual);      // residual = A*x
-            CommonOps_DDRM.subtract(b, residual, residual); // residual = b - A*x
+         while (iter < Constants.MAX_ITER && relError > tol) {
 
-            // Ar = A * residual
-            CommonOps_DSCC.mult(A, residual, Ar);
+             // residual = b - A*x
+             CommonOps_DSCC.mult(A, x, residual);      // residual = A*x
+             CommonOps_DDRM.subtract(b, residual, residual); // residual = b - A*x
 
-            // step = (r^T r) / (r^T A r)
-            double numerator = CommonOps_DDRM.dot(residual, residual);
-            double denominator = CommonOps_DDRM.dot(residual, Ar);
+             // Ar = A * residual
+             CommonOps_DSCC.mult(A, residual, Ar);
 
-            double step = numerator / denominator;
+             // step = (r^T r) / (r^T A r)
+             double numerator = CommonOps_DDRM.dot(residual, residual);
+             double denominator = CommonOps_DDRM.dot(residual, Ar);
 
-            // x = x + step * residual
-            CommonOps_DDRM.addEquals(x, step, residual);
+             double step = numerator / denominator;
 
-            // errore relativo ||Ax - b|| / ||b||
-            relError = calculateRelativeError(A, x, b, normB, bufferAx, bufferRes);
+             // x = x + step * residual
+             CommonOps_DDRM.addEquals(x, step, residual);
 
-            iter++;
-        }
+             // errore relativo ||Ax - b|| / ||b||
+             relError = calculateRelativeError(A, x, b, normB, bufferAx, bufferRes);
 
-        boolean converged = relError <= tol;
+             result.addResidual(relError);
+             iter++;
+         }
 
-        return new IterationResult(x, iter, converged, relError);
+         boolean converged = relError <= tol;
+
+         result.iterations = iter;
+         result.converged = converged;
+         result.relativeError = relError;
+         return result;
     }
 
     /**

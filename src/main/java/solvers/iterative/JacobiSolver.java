@@ -68,49 +68,51 @@ public class JacobiSolver extends AbstractIterativeSolver {
         DMatrixRMaj bufferAx = new DMatrixRMaj(n, 1);
         DMatrixRMaj bufferRes = new DMatrixRMaj(n, 1);
 
-         IterationResult result = null;
-         while (iter < Constants.MAX_ITER) {
-             // Copia dell'array
-             System.arraycopy(xData, 0, xOldData, 0, n);
+         IterationResult result = new IterationResult(x, 0, false, Double.MAX_VALUE);
+          while (iter < Constants.MAX_ITER) {
+              // Copia dell'array
+              System.arraycopy(xData, 0, xOldData, 0, n);
 
-             // Ciclo Jacobi
-             for (int i = 0; i < n; i++) {
-                 double sum = 0.0;
+              // Ciclo Jacobi
+              for (int i = 0; i < n; i++) {
+                  double sum = 0.0;
 
-                 // Accesso ai dati CSC
-                 // Poiché la matrice è simmetrica, A(i, j) == A(j, i).
-                 // In CSC le colonne sono contigue, quindi iterare sulla colonna 'i'
-                 // è come iterare sulla riga 'i' in formato CSR.
-                 int start = A.col_idx[i];
-                 int end = A.col_idx[i + 1];
+                  // Accesso ai dati CSC
+                  // Poiché la matrice è simmetrica, A(i, j) == A(j, i).
+                  // In CSC le colonne sono contigue, quindi iterare sulla colonna 'i'
+                  // è come iterare sulla riga 'i' in formato CSR.
+                  int start = A.col_idx[i];
+                  int end = A.col_idx[i + 1];
 
-                 for (int k = start; k < end; k++) {
-                     int j = A.nz_rows[k];
-                     if (i != j) {
-                         sum += A.nz_values[k] * xOldData[j];
-                     }
-                 }
+                  for (int k = start; k < end; k++) {
+                      int j = A.nz_rows[k];
+                      if (i != j) {
+                          sum += A.nz_values[k] * xOldData[j];
+                      }
+                  }
 
-                 // Moltiplicazione per l'inverso della diagonale (pre-calcolato)
-                 xData[i] = (bData[i] - sum) * invDiag[i];
-             }
+                  // Moltiplicazione per l'inverso della diagonale (pre-calcolato)
+                  xData[i] = (bData[i] - sum) * invDiag[i];
+              }
 
-             // Calcolo dell'errore (||Ax - b|| / ||b||)
-             relError = calculateRelativeError(A, x, b, normB, bufferAx, bufferRes);
+              // Calcolo dell'errore (||Ax - b|| / ||b||) e salvataggio nella storia
+              relError = calculateRelativeError(A, x, b, normB, bufferAx, bufferRes);
+              result.addResidual(relError);
 
-             if (relError < tol) {
-                 result = new IterationResult(x, iter + 1, true, relError);
-                 // Store this last error value
-                 result.relativeError = relError;
-                 return result;
-             }
+              if (relError < tol) {
+                  result.converged = true;
+                  result.iterations = iter + 1;
+                  result.relativeError = relError;
+                  return result;
+              }
 
-             iter++;
-         }
+              iter++;
+          }
 
-         result = new IterationResult(x, iter, false, relError);
-         result.relativeError = relError;
-         return result;
+          result.converged = false;
+          result.iterations = iter;
+          result.relativeError = relError;
+          return result;
     }
 
     /**

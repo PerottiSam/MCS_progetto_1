@@ -78,31 +78,36 @@ public class GaussSeidelSolver extends AbstractIterativeSolver {
 
         int iter = 0;
 
-        // Calcolo dell'errore relativo
-        double currentRelativeError = calculateRelativeError(A, x, b, normB, bufferAx, bufferResidual);
+         // Calcolo dell'errore relativo
+         double currentRelativeError = calculateRelativeError(A, x, b, normB, bufferAx, bufferResidual);
 
+         IterationResult result = new IterationResult(x, 0, false, currentRelativeError);
 
-        while (iter < MAX_ITER && currentRelativeError >= tol) {
+         while (iter < MAX_ITER && currentRelativeError >= tol) {
 
-            // y = N * x
-            CommonOps_DSCC.mult(N, x, y);
+             // y = N * x
+             CommonOps_DSCC.mult(N, x, y);
 
-            // y = y + b
-            CommonOps_DDRM.addEquals(y, b);
+             // y = y + b
+             CommonOps_DDRM.addEquals(y, b);
 
-            // risoluzione del sistema triangolare inferiore P * x_new = y
-            TriangularSolver.solveLower(P, y, xNew);
+             // risoluzione del sistema triangolare inferiore P * x_new = y
+             TriangularSolver.solveLower(P, y, xNew);
 
-            // aggiornamento di x
-            x.setTo(xNew);
+             // aggiornamento di x
+             x.setTo(xNew);
 
-            // update dell'errore relativo tramite i buffer
-            currentRelativeError = calculateRelativeError(A, x, b, normB, bufferAx, bufferResidual);
+             // update dell'errore relativo tramite i buffer
+             currentRelativeError = calculateRelativeError(A, x, b, normB, bufferAx, bufferResidual);
 
-            iter++;
-        }
+             result.addResidual(currentRelativeError);
+             iter++;
+         }
 
-        return new IterationResult(x, iter, currentRelativeError < tol, currentRelativeError);
+         result.iterations = iter;
+         result.converged = currentRelativeError < tol;
+         result.relativeError = currentRelativeError;
+         return result;
     }
 
     /**
