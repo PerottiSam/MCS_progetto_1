@@ -53,43 +53,53 @@ public class ConjugateGradientSolver extends AbstractIterativeSolver {
 
         double currentRelativeError = 0.0;
 
-        int iter = 0;
+         int iter = 0;
 
-        while(iter < MAX_ITER ){
-            currentRelativeError = Math.sqrt(rsold) / normB;
-            if (currentRelativeError < tol) {
-                break; // convergenza raggiunta, esci dal ciclo
-            }
+         IterationResult result = new IterationResult(x, 0, false, 0.0);
 
-            // Ap = A * p
-            CommonOps_DSCC.mult(A, p, Ap);
+         while(iter < MAX_ITER ){
+             currentRelativeError = Math.sqrt(rsold) / normB;
+             result.addResidual(currentRelativeError);
 
-            //alpha = (r^T * r) / (p^T * A * p)
-            double pAp = VectorVectorMult_DDRM.innerProd(p, Ap);
-            double alpha = rsold / pAp;
+             if (currentRelativeError < tol) {
+                 result.iterations = iter;
+                 result.converged = true;
+                 result.relativeError = currentRelativeError;
+                 return result;
+             }
 
-            //x = x + alpha * p
-            CommonOps_DDRM.addEquals(x, alpha, p);
+             // Ap = A * p
+             CommonOps_DSCC.mult(A, p, Ap);
 
-            //r = r - alpha * Ap
-            CommonOps_DDRM.addEquals(r, -alpha, Ap);
+             //alpha = (r^T * r) / (p^T * A * p)
+             double pAp = VectorVectorMult_DDRM.innerProd(p, Ap);
+             double alpha = rsold / pAp;
 
-            //calcola il nuovo prodotto scalare r^T * r
-            double rsnew = VectorVectorMult_DDRM.innerProd(r, r);
+             //x = x + alpha * p
+             CommonOps_DDRM.addEquals(x, alpha, p);
 
-            //beta = (r_{k+1}^T * r_{k+1}) / (r_k^T * r_k)
-            double beta = rsnew / rsold;
+             //r = r - alpha * Ap
+             CommonOps_DDRM.addEquals(r, -alpha, Ap);
 
-            //p = r + beta * p
-            CommonOps_DDRM.add(r, beta, p, p);
+             //calcola il nuovo prodotto scalare r^T * r
+             double rsnew = VectorVectorMult_DDRM.innerProd(r, r);
 
-            rsold = rsnew;
+             //beta = (r_{k+1}^T * r_{k+1}) / (r_k^T * r_k)
+             double beta = rsnew / rsold;
 
-            iter++;
+             //p = r + beta * p
+             CommonOps_DDRM.add(r, beta, p, p);
 
-        }
+             rsold = rsnew;
 
-        return new IterationResult(x, iter, iter < MAX_ITER, currentRelativeError);
+             iter++;
+
+         }
+
+         result.iterations = iter;
+         result.converged = false;
+         result.relativeError = currentRelativeError;
+         return result;
     }
 
     /**

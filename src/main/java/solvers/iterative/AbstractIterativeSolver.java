@@ -57,13 +57,22 @@ public abstract class AbstractIterativeSolver implements IterativeSolver {
         }
 
         // Ritorna il risultato finale con la soluzione, numero di iterazioni, tempo, stato di convergenza ed errore relativo
-        return new SolverResult(
+        SolverResult solverResult = new SolverResult(
                 result.x,
                 result.iterations,
                 timeInSeconds,
                 result.converged,
                 result.relativeError
         );
+
+        // Copia la storia dei residui da IterationResult a SolverResult
+        if (result.residualHistory != null && !result.residualHistory.isEmpty()) {
+            for (double residual : result.residualHistory) {
+                solverResult.addResidual(residual);
+            }
+        }
+
+        return solverResult;
     }
 
     /**

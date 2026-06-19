@@ -1,6 +1,8 @@
 package models;
 
 import org.ejml.data.DMatrixRMaj;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Oggetto contenitore (DTO) che rappresenta il risultato finale e completo
@@ -26,6 +28,12 @@ public class SolverResult {
     /** L'errore relativo finale calcolato al termine dell'esecuzione. */
     public double relativeError;
 
+    /** Lista dei valori di errore relativo per ogni iterazione */
+    public List<Double> relativeErrorHistory;
+
+    /** Lista dei valori di residuo relativo per ogni iterazione */
+    public List<Double> residualHistory;
+
     /**
      * Crea un nuovo risultato finale contenente le statistiche di risoluzione.
      *
@@ -42,5 +50,21 @@ public class SolverResult {
         this.time = time;
         this.converged = converged;
         this.relativeError = relativeError;
+        this.relativeErrorHistory = new ArrayList<>();
+        this.residualHistory = new ArrayList<>();
+    }
+
+    /**
+     * Aggiunge un valore di errore relativo alla storia.
+     */
+    public void addRelativeError(double error) {
+        this.relativeErrorHistory.add(error);
+    }
+
+    /**
+     * Aggiunge un valore di residuo relativo alla storia.
+     */
+    public void addResidual(double residual) {
+        this.residualHistory.add(residual);
     }
 }
